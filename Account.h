@@ -1,119 +1,111 @@
+#ifndef ACCOUNT_H
+#define ACCOUNT_H
+
 #include <iostream>
 #include <string>
-#include <cassert>
-#include <iomanip> 
-using std::string;
-using std::ostream;
-using std::istream;
-using std::cout;
-using std::endl;
+using namespace std;
 
+// Base class: Account
 class Account {
 protected:
-    string owner_;
-    double bal_;
+    string ownerName;
+    double balance;
 
 public:
-    Account(const string& owner = "", double balance = 0.0)
-        : owner_(owner), bal_(balance) {}
+    // Parameterized constructor
+    Account(string name = "", double bal = 0.0) : ownerName(name), balance(bal) {}
 
+    // Getter for balance
+    double getBalance() const {
+        return balance;
+    }
+
+    // Virtual display function
+    virtual void display() const {
+        cout << "Owner: " << ownerName << endl;
+        cout << "Balance: " << balance << endl;
+    }
+
+    // Virtual destructor
     virtual ~Account() {
-        cout << "Account closed for " << owner_ << '\n';
+        cout << "Account closed for " << ownerName << endl;
     }
 
-    double getBalance() const noexcept { return bal_; }
+    // Operator overloading
 
-    virtual bool deposit(double amount) {
-        if (amount <= 0) return false;
-        bal_ += amount;
-        return true;
-    }
-
-    virtual bool withdraw(double amount) {
-        if (amount <= 0 || amount > bal_) return false;
-        bal_ -= amount;
-        return true;
-    }
-
-    virtual void display(ostream& os = cout) const {
-        os << "Owner: " << owner_ << '\n';
-        os << "Balance: " << bal_ << '\n';
-    }
-
-    virtual Account* clone() const { return new Account(*this); }
-
+    // + operator → combines balances and returns new Account
     Account operator+(const Account& other) const {
-        string combinedOwner = owner_ + " & " + other.owner_;
-        return Account(combinedOwner, bal_ + other.bal_);
+        return Account(ownerName, balance + other.balance);
     }
 
-    double operator-(const Account& other) const noexcept {
-        return bal_ - other.bal_;
+    // - operator → returns difference between balances
+    double operator-(const Account& other) const {
+        return balance - other.balance;
     }
 
-    bool operator==(const Account& other) const noexcept {
-        return bal_ == other.bal_;
+    // == operator → compares balances
+    bool operator==(const Account& other) const {
+        return balance == other.balance;
     }
 
-    friend ostream& operator<<(ostream& os, const Account& a) {
-        a.display(os); 
+    // << operator → output account info
+    friend ostream& operator<<(ostream& os, const Account& acc) {
+        os << "Owner: " << acc.ownerName << endl;
+        os << "Balance: " << acc.balance << endl;
         return os;
     }
 
-    friend istream& operator>>(istream& is, Account& a) {
-        is >> a.owner_ >> a.bal_;
+    // >> operator → input account info
+    friend istream& operator>>(istream& is, Account& acc) {
+        is >> acc.ownerName >> acc.balance;
         return is;
     }
 };
 
+// Derived class: SavingsAccount
 class SavingsAccount : public Account {
 private:
-    double ratePercent_; 
+    double interestRate;
 
 public:
-    SavingsAccount(const string& owner = "", double balance = 0.0, double rate = 0.0)
-        : Account(owner, balance), ratePercent_(rate) {}
+    // Constructor
+    SavingsAccount(string name = "", double bal = 0.0, double rate = 0.0)
+        : Account(name, bal), interestRate(rate) {}
 
-    void display(ostream& os = cout) const override {
-        os << "Owner: " << owner_ << '\n';
-        os << "Balance: " << bal_ << '\n';
-        os << "Interest Rate: " << std::fixed << std::setprecision(1) << ratePercent_ << "%\n";
+    // Override display
+    void display() const override {
+        cout << "Owner: " << ownerName << endl;
+        cout << "Balance: " << balance << endl;
+        cout << "Interest Rate: " << interestRate << "%" << endl;
     }
 
+    // Destructor
     ~SavingsAccount() override {
-        cout << "Account closed for " << owner_ << '\n';
+        cout << "Account closed for " << ownerName << endl;
     }
-
-    Account* clone() const override { return new SavingsAccount(*this); }
-
-    void applyAnnualInterest() { bal_ += bal_ * (ratePercent_ / 100.0); }
 };
 
+// Derived class: CheckingAccount
 class CheckingAccount : public Account {
 private:
-    double feePerTransaction_;
+    double transactionFee;
 
 public:
-    CheckingAccount(const string& owner = "", double balance = 0.0, double fee = 0.0)
-        : Account(owner, balance), feePerTransaction_(fee) {}
+    // Constructor
+    CheckingAccount(string name = "", double bal = 0.0, double fee = 0.0)
+        : Account(name, bal), transactionFee(fee) {}
 
-    void display(ostream& os = cout) const override {
-        os << "Owner: " << owner_ << '\n';
-        os << "Balance: " << bal_ << '\n';
-        os << "Transaction Fee: " << feePerTransaction_ << '\n';
+    // Override display
+    void display() const override {
+        cout << "Owner: " << ownerName << endl;
+        cout << "Balance: " << balance << endl;
+        cout << "Transaction Fee: " << transactionFee << endl;
     }
 
+    // Destructor
     ~CheckingAccount() override {
-        cout << "Account closed for " << owner_ << '\n';
-    }
-
-    Account* clone() const override { return new CheckingAccount(*this); }
-
-    bool withdraw(double amount) override {
-        if (amount <= 0) return false;
-        double total = amount + feePerTransaction_;
-        if (total > bal_) return false;
-        bal_ -= total;
-        return true;
+        cout << "Account closed for " << ownerName << endl;
     }
 };
+
+#endif
