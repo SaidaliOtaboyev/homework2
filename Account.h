@@ -1,69 +1,60 @@
+#ifndef ACCOUNT_H
+#define ACCOUNT_H
+
 #include <iostream>
 #include <string>
+using namespace std;
 
+// =====================
+// Base Class: Account
+// =====================
 class Account {
 protected:
-    std::string ownerName;
+    string ownerName;
     double balance;
 
 public:
-    Account(std::string name, double bal) : ownerName(name), balance(bal) {}
-    
-    double getBalance() {
-        return balance;
-    }
+    Account(string ismim, double pulim): ownerName(ismim), balance(pulim) {}
 
-    virtual void display() {
-        std::cout << "Owner: " << ownerName << "\nBalance: " << balance << std::endl;
-    }
+    double getBalance() const {return balance;}
 
-    virtual ~Account() {
-        std::cout << "Account closed for " << ownerName << std::endl;
-    }
+    virtual void display() {cout << "Owner: " << ownerName << "\n" << "Balance: " << balance << "\n";}
 
-    Account operator+(const Account& other) {
-        return Account(ownerName, balance + other.balance);
-    }
+    virtual ~Account() {cout << "Account closed for " << ownerName << "\n";}
 
-    double operator-(const Account& other) {
-        return balance - other.balance;
-    }
+    Account operator+(const Account& other) const {return Account(ownerName, balance + other.balance);}
 
-    bool operator==(const Account& other) {
-        return balance == other.balance;
-    }
+    Account operator-(const Account& other) const {return Account(ownerName, balance - other.balance);}
 
-    friend std::ostream& operator<<(std::ostream& os, const Account& acc) {
-        os << "Owner: " << acc.ownerName << "\nBalance: " << acc.balance;
-        return os;
-    }
+    bool operator==(const Account& other) const {return balance == other.balance;}
 
-    friend std::istream& operator>>(std::istream& is, Account& acc) {
-        is >> acc.ownerName >> acc.balance;
-        return is;
-    }
+    friend ostream& operator<<(ostream& os, const Account& acc) {os << "Owner: " << acc.ownerName << "\n" << "Balance: " << acc.balance << "\n";return os;}
+
+    friend istream& operator>>(istream& is, Account& acc) {is >> acc.ownerName >> acc.balance;return is;}
 };
+
 
 class SavingsAccount : public Account {
 private:
     double interestRate;
 
 public:
-    SavingsAccount(std::string name, double bal, double rate) : Account(name, bal), interestRate(rate) {}
+    SavingsAccount(string ismim, double pulim, double pulimkopayishi): Account(ismim, pulim), interestRate(pulimkopayishi) {}
 
-    void display() override {
-        std::cout << "Owner: " << ownerName << "\nBalance: " << balance << "\nInterest Rate: " << interestRate << "%" << std::endl;
-    }
+    void display() {cout << "Owner: " << ownerName << "\n" << "Balance: " << balance << "\n" << "Interest Rate: " << interestRate << "%" << "\n";}
+
+    ~SavingsAccount() {}
 };
 
 class CheckingAccount : public Account {
 private:
     double transactionFee;
-
 public:
-    CheckingAccount(std::string name, double bal, double fee) : Account(name, bal), transactionFee(fee) {}
+    CheckingAccount(string ismim, double pulim, double pulimkamayishi): Account(ismim, pulim), transactionFee(pulimkamayishi) {}
 
-    void display() override {
-        std::cout << "Owner: " << ownerName << "\nBalance: " << balance << "\nTransaction Fee: " << transactionFee << std::endl;
-    }
+    void display() {cout << "Owner: " << ownerName << "\n" << "Balance: " << balance << "\n" << "Transaction Fee: " << transactionFee << "\n";}
+
+    ~CheckingAccount() {}
 };
+
+#endif
