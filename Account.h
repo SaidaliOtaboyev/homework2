@@ -3,97 +3,89 @@
 
 #include <iostream>
 #include <string>
+#include <limits>
+#include <cmath>
 
-// =====================================
-// Base Class: CoreAccount
-// =====================================
-class CoreAccount {
+class Account {
 protected:
-    std::string holder;
-    double funds;
+    std::string ownerName;
+    double balance;
 
 public:
-    CoreAccount(const std::string& name, double amount)
-        : holder(name), funds(amount) {}
+    Account(std::string name = "", double bal = 0.0)
+        : ownerName(std::move(name)), balance(bal) {}
 
-    virtual ~CoreAccount() {
-        std::cout << "Account terminated for " << holder << std::endl;
+    double getBalance() const {
+        return balance;
     }
 
-    double getFunds() const {
-        return funds;
+    virtual void display() const {
+        std::cout << "Owner: " << ownerName << std::endl;
+        std::cout << "Balance: " << balance << std::endl;
     }
 
-    virtual void print() const {
-        std::cout << "Holder : " << holder << "\n"
-                  << "Funds  : " << funds << "\n";
+    virtual ~Account() {
+        std::cout << "Account closed for " << ownerName << std::endl;
     }
 
-    // Operators rewritten but same functionality
-    CoreAccount operator+(const CoreAccount& other) const {
-        return CoreAccount(holder, funds + other.funds);
+    // Operator overloadlar
+    Account operator+(const Account& other) const {
+        return Account(ownerName, balance + other.balance);
     }
 
-    CoreAccount operator-(const CoreAccount& other) const {
-        return CoreAccount(holder, funds - other.funds);
+    double operator-(const Account& other) const {
+        return balance - other.balance;
     }
 
-    bool operator==(const CoreAccount& other) const {
-        return funds == other.funds;
+    bool operator==(const Account& other) const {
+        // floating point comparison with small epsilon
+        return std::fabs(balance - other.balance) <= 1e-9;
     }
 
-    friend std::ostream& operator<<(std::ostream& out, const CoreAccount& acc) {
-        out << "Holder : " << acc.holder << "\n"
-            << "Funds  : " << acc.funds << "\n";
+    friend std::ostream& operator<<(std::ostream& out, const Account& acc) {
+        out << "Owner: " << acc.ownerName << std::endl;
+        out << "Balance: " << acc.balance << std::endl;
         return out;
     }
 
-    friend std::istream& operator>>(std::istream& in, CoreAccount& acc) {
-        in >> acc.holder >> acc.funds;
+    friend std::istream& operator>>(std::istream& in, Account& acc) {
+        // consume leading whitespace/newline, then read full line for name
+        std::getline(in >> std::ws, acc.ownerName);
+        in >> acc.balance;
+        // discard rest of the line so next reads start clean
+        in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return in;
     }
 };
 
-// =====================================
-// SavingsAccount
-// =====================================
-class SavingsAccount : public CoreAccount {
+class SavingsAccount : public Account {
 private:
-    double rate;
+    double interestRate;
 
 public:
-    SavingsAccount(const std::string& name, double amount, double interest)
-        : CoreAccount(name, amount), rate(interest) {}
+    SavingsAccount(std::string name = "", double bal = 0.0, double rate = 0.0)
+        : Account(std::move(name), bal), interestRate(rate) {}
 
-    void print() const override {
-        std::cout << "Savings Account\n"
-                  << "Holder        : " << holder << "\n"
-                  << "Funds         : " << funds << "\n"
-                  << "Interest Rate : " << rate << "%\n";
+    void display() const override {
+        std::cout << "Owner: " << ownerName << std::endl;
+        std::cout << "Balance: " << balance << std::endl;
+        std::cout << "Interest Rate: " << interestRate << "%" << std::endl;
     }
-
-    ~SavingsAccount() override = default;
 };
 
-// =====================================
-// CheckingAccount
-// =====================================
-class CheckingAccount : public CoreAccount {
+class CheckingAccount : public Account {
 private:
-    double fee;
+    double transactionFee;
 
 public:
-    CheckingAccount(const std::string& name, double amount, double charge)
-        : CoreAccount(name, amount), fee(charge) {}
+    CheckingAccount(std::string name = "", double bal = 0.0, double fee = 0.0)
+        : Account(std::move(name), bal), transactionFee(fee) {}
 
-    void print() const override {
-        std::cout << "Checking Account\n"
-                  << "Holder       : " << holder << "\n"
-                  << "Funds        : " << funds << "\n"
-                  << "Fee per Use  : " << fee << "\n";
+    void display() const override {
+        std::cout << "Owner: " << ownerName << std::endl;
+        std::cout << "Balance: " << balance << std::endl;
+        std::cout << "Transaction Fee: " << transactionFee << std::endl;
     }
-
-    ~CheckingAccount() override = default;
 };
 
-#endif
+#endif // ACCOUNT_H
