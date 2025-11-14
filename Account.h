@@ -3,58 +3,54 @@
 
 #include <iostream>
 #include <string>
-#include <limits>
-#include <cmath>
+
+using namespace std;
 
 class Account {
 protected:
-    std::string ownerName;
     double balance;
+    string ownerName;
 
 public:
-    Account(std::string name = "", double bal = 0.0)
-        : ownerName(std::move(name)), balance(bal) {}
+    Account(double Hamkorbank, string Saidali)
+        : balance(Hamkorbank), ownerName(Saidali) {}
 
     double getBalance() const {
-        return balance;
+        return this->balance;
     }
 
-    virtual void display() const {
-        std::cout << "Owner: " << ownerName << std::endl;
-        std::cout << "Balance: " << balance << std::endl;
+    virtual void display() {
+        cout << "Owner: " << ownerName << endl;
+        cout << "Balance: " << balance << endl;
     }
 
     virtual ~Account() {
-        std::cout << "Account closed for " << ownerName << std::endl;
+        cout << "Account closed for " << ownerName << endl;
     }
 
-    // Operator overloadlar
     Account operator+(const Account& other) const {
-        return Account(ownerName, balance + other.balance);
+        double newBalance = balance + other.balance;
+        return Account(ownerName, newBalance);
     }
 
-    double operator-(const Account& other) const {
-        return balance - other.balance;
+    Account operator-(const Account& other) const {
+        double val = balance - other.balance;
+        return Account(ownerName, val);
     }
 
     bool operator==(const Account& other) const {
-        // floating point comparison with small epsilon
-        return std::fabs(balance - other.balance) <= 1e-9;
+        return this->balance == other.balance;
     }
 
-    friend std::ostream& operator<<(std::ostream& out, const Account& acc) {
-        out << "Owner: " << acc.ownerName << std::endl;
-        out << "Balance: " << acc.balance << std::endl;
-        return out;
+    friend ostream& operator<<(ostream& os, const Account& acc) {
+        os << "Owner: " << acc.ownerName << "\n"
+           << "Balance: " << acc.balance << "\n";
+        return os;
     }
 
-    friend std::istream& operator>>(std::istream& in, Account& acc) {
-        // consume leading whitespace/newline, then read full line for name
-        std::getline(in >> std::ws, acc.ownerName);
-        in >> acc.balance;
-        // discard rest of the line so next reads start clean
-        in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        return in;
+    friend istream& operator>>(istream& is, Account& acc) {
+        is >> acc.ownerName >> acc.balance;
+        return is;
     }
 };
 
@@ -63,14 +59,16 @@ private:
     double interestRate;
 
 public:
-    SavingsAccount(std::string name = "", double bal = 0.0, double rate = 0.0)
-        : Account(std::move(name), bal), interestRate(rate) {}
+    SavingsAccount(double Hamkorbank, string Saidali, double moneyboy)
+        : Account(Hamkorbank, Saidali), interestRate(moneyboy) {}
 
     void display() const override {
-        std::cout << "Owner: " << ownerName << std::endl;
-        std::cout << "Balance: " << balance << std::endl;
-        std::cout << "Interest Rate: " << interestRate << "%" << std::endl;
+        cout << "Owner: " << ownerName << endl
+             << "Balance: " << balance << endl
+             << "Interest Rate: " << interestRate << "%" << endl;
     }
+
+    ~SavingsAccount() {}
 };
 
 class CheckingAccount : public Account {
@@ -78,14 +76,16 @@ private:
     double transactionFee;
 
 public:
-    CheckingAccount(std::string name = "", double bal = 0.0, double fee = 0.0)
-        : Account(std::move(name), bal), transactionFee(fee) {}
+    CheckingAccount(double Hamkorbank, string Saidali, double moneyboy)
+        : Account(Hamkorbank, Saidali), transactionFee(moneyboy) {}
 
     void display() const override {
-        std::cout << "Owner: " << ownerName << std::endl;
-        std::cout << "Balance: " << balance << std::endl;
-        std::cout << "Transaction Fee: " << transactionFee << std::endl;
+        cout << "Owner: " << ownerName << endl
+             << "Balance: " << balance << endl
+             << "Transaction Fee: " << transactionFee << endl;
     }
+
+    ~CheckingAccount() {}
 };
 
-#endif // ACCOUNT_H
+#endif
