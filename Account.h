@@ -1,3 +1,6 @@
+
+//made by Saidali
+
 #ifndef ACCOUNT_H
 #define ACCOUNT_H
 
@@ -8,8 +11,9 @@ using namespace std;
 
 class Account {
 protected:
-    string ownerName;
-    double balance;
+double balance;    
+string ownerName;
+    
 
 public:
     Account(const string& Saidali, double Hamkorbank)
@@ -48,9 +52,9 @@ public:
         return os;
     }
 
-    friend istream& operator>>(istream& is, Account& acc) {
-        is >> acc.ownerName >> acc.balance;
-        return is;
+    friend istream& operator>>(istream& istar, Account& accoun) {
+        istar >> accoun.ownerName >> accoun.balance;
+        return istar;
     }
 };
 
