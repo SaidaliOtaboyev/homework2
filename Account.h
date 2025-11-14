@@ -8,18 +8,18 @@ using namespace std;
 
 class Account {
 protected:
-    double balance;
     string ownerName;
+    double balance;
 
 public:
-    Account(double Hamkorbank, string Saidali)
-        : balance(Hamkorbank), ownerName(Saidali) {}
+    Account(const string& Saidali, double Hamkorbank)
+        : ownerName(Saidali), balance(Hamkorbank) {}
 
     double getBalance() const {
-        return this->balance;
+        return balance;
     }
 
-    virtual void display() {
+    virtual void display() const {
         cout << "Owner: " << ownerName << endl;
         cout << "Balance: " << balance << endl;
     }
@@ -30,21 +30,21 @@ public:
 
     Account operator+(const Account& other) const {
         double newBalance = balance + other.balance;
-        return Account(newBalance, ownerName);
+        return Account(ownerName, newBalance);
     }
 
     Account operator-(const Account& other) const {
-        double val = balance - other.balance;
-        return Account(val, ownerName);
+        double newBalance = balance - other.balance;
+        return Account(ownerName, newBalance);
     }
 
     bool operator==(const Account& other) const {
-        return this->balance == other.balance;
+        return balance == other.balance;
     }
 
     friend ostream& operator<<(ostream& os, const Account& acc) {
-        os << "Owner: " << acc.ownerName << "\n"
-           << "Balance: " << acc.balance << "\n";
+        os << "Owner: " << acc.ownerName << endl
+           << "Balance: " << acc.balance << endl;
         return os;
     }
 
@@ -59,10 +59,10 @@ private:
     double interestRate;
 
 public:
-    SavingsAccount(double Hamkorbank, string Saidali, double moneyboy)
-        : Account(Hamkorbank, Saidali), interestRate(moneyboy) {}
+    SavingsAccount(const string& Saidali, double Hamkorbank, double moneyboy)
+        : Account(Saidali, Hamkorbank), interestRate(moneyboy) {}
 
-    void display()  override {
+    void display() const override {
         cout << "Owner: " << ownerName << endl
              << "Balance: " << balance << endl
              << "Interest Rate: " << interestRate << "%" << endl;
@@ -76,10 +76,10 @@ private:
     double transactionFee;
 
 public:
-    CheckingAccount(double Hamkorbank, string Saidali, double moneyboy)
-        : Account(Hamkorbank, Saidali), transactionFee(moneyboy) {}
+    CheckingAccount(const string& Saidali, double Hamkorbank, double moneyboy)
+        : Account(Saidali, Hamkorbank), transactionFee(moneyboy) {}
 
-    void display()  override {
+    void display() const override {
         cout << "Owner: " << ownerName << endl
              << "Balance: " << balance << endl
              << "Transaction Fee: " << transactionFee << endl;
