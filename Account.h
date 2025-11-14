@@ -4,121 +4,96 @@
 #include <iostream>
 #include <string>
 
-// ======================================
-// Base Class: BankAccount (renamed)
-// ======================================
-class BankAccount {
+// =====================================
+// Base Class: CoreAccount
+// =====================================
+class CoreAccount {
 protected:
-    std::string owner;
-    double currentBalance;
+    std::string holder;
+    double funds;
 
 public:
-    // Constructor rewritten with different order & naming
-    BankAccount(const std::string& name, double initialAmount)
-        : owner(name), currentBalance(initialAmount) {}
+    CoreAccount(const std::string& name, double amount)
+        : holder(name), funds(amount) {}
 
-    virtual ~BankAccount() {
-        std::cout << "Closing account for: " << owner << std::endl;
+    virtual ~CoreAccount() {
+        std::cout << "Account terminated for " << holder << std::endl;
     }
 
-    // Getter unchanged logically but reworded
-    double balance() const {
-        return currentBalance;
+    double getFunds() const {
+        return funds;
     }
 
-    // Display rewritten with different formatting & wording
-    virtual void show() const {
-        std::cout << "[Account Info]\n"
-                  << "Name   : " << owner << "\n"
-                  << "Balance: " << currentBalance << "\n";
+    virtual void print() const {
+        std::cout << "Holder : " << holder << "\n"
+                  << "Funds  : " << funds << "\n";
     }
 
-    // -------- Operator Overloads --------
-
-    // Addition operator rewritten differently
-    BankAccount operator+(const BankAccount& rhs) const {
-        BankAccount result(owner, currentBalance + rhs.currentBalance);
-        return result;
+    // Operators rewritten but same functionality
+    CoreAccount operator+(const CoreAccount& other) const {
+        return CoreAccount(holder, funds + other.funds);
     }
 
-    // Subtraction operator rewritten differently
-    BankAccount operator-(const BankAccount& rhs) const {
-        BankAccount result(owner, currentBalance - rhs.currentBalance);
-        return result;
+    CoreAccount operator-(const CoreAccount& other) const {
+        return CoreAccount(holder, funds - other.funds);
     }
 
-    // Equality rewritten
-    bool operator==(const BankAccount& rhs) const {
-        return currentBalance == rhs.currentBalance;
+    bool operator==(const CoreAccount& other) const {
+        return funds == other.funds;
     }
 
-    // Stream insertion rewritten
-    friend std::ostream& operator<<(std::ostream& out, const BankAccount& acc) {
-        out << "Owner: " << acc.owner << "\n"
-            << "Balance: " << acc.currentBalance << "\n";
+    friend std::ostream& operator<<(std::ostream& out, const CoreAccount& acc) {
+        out << "Holder : " << acc.holder << "\n"
+            << "Funds  : " << acc.funds << "\n";
         return out;
     }
 
-    // Stream extraction rewritten
-    friend std::istream& operator>>(std::istream& in, BankAccount& acc) {
-        in >> acc.owner >> acc.currentBalance;
+    friend std::istream& operator>>(std::istream& in, CoreAccount& acc) {
+        in >> acc.holder >> acc.funds;
         return in;
     }
 };
 
-
-// ========================================
-// Derived Class: SavingsAccount
-// ========================================
-class SavingsAccount : public BankAccount {
+// =====================================
+// SavingsAccount
+// =====================================
+class SavingsAccount : public CoreAccount {
 private:
     double rate;
 
 public:
-    SavingsAccount(const std::string& name,
-                   double amount,
-                   double interest)
-        : BankAccount(name, amount), rate(interest) {}
+    SavingsAccount(const std::string& name, double amount, double interest)
+        : CoreAccount(name, amount), rate(interest) {}
 
-    // show() rewritten differently
-    void show() const override {
-        std::cout << "[Savings Account]\n"
-                  << "Holder        : " << owner << "\n"
-                  << "Current Funds : " << currentBalance << "\n"
+    void print() const override {
+        std::cout << "Savings Account\n"
+                  << "Holder        : " << holder << "\n"
+                  << "Funds         : " << funds << "\n"
                   << "Interest Rate : " << rate << "%\n";
     }
 
     ~SavingsAccount() override = default;
 };
 
-
-// ========================================
-// Derived Class: CheckingAccount
-// ========================================
-class CheckingAccount : public BankAccount {
+// =====================================
+// CheckingAccount
+// =====================================
+class CheckingAccount : public CoreAccount {
 private:
     double fee;
 
 public:
-    CheckingAccount(const std::string& name,
-                    double amount,
-                    double transactionFee)
-        : BankAccount(name, amount), fee(transactionFee) {}
+    CheckingAccount(const std::string& name, double amount, double charge)
+        : CoreAccount(name, amount), fee(charge) {}
 
-    // show() rewritten differently
-    void show() const override {
-        std::cout << "[Checking Account]\n"
-                  << "Holder        : " << owner << "\n"
-                  << "Current Funds : " << currentBalance << "\n"
-                  << "Fee per Use   : " << fee << "\n";
+    void print() const override {
+        std::cout << "Checking Account\n"
+                  << "Holder       : " << holder << "\n"
+                  << "Funds        : " << funds << "\n"
+                  << "Fee per Use  : " << fee << "\n";
     }
 
     ~CheckingAccount() override = default;
-};
-
-#endif
-
-    ~CheckingAccount() {}
 };
 
 #endif
